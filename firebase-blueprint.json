@@ -1,0 +1,62 @@
+{
+  "projectId": "integrated-metric-vcf5x",
+  "auth": {
+    "providers": ["email", "phone", "google"]
+  },
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profiles",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "name": { "type": "string" },
+        "username": { "type": "string" },
+        "country": { "type": "string" },
+        "gender": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "followers": { "type": "array" },
+        "following": { "type": "array" },
+        "favorites": { "type": "array" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Products listed for sale",
+      "type": "object",
+      "properties": {
+        "sellerId": { "type": "string" },
+        "sellerName": { "type": "string" },
+        "title": { "type": "string" },
+        "price": { "type": "number" },
+        "phone": { "type": "string" },
+        "images": { "type": "array" },
+        "video": { "type": "string" },
+        "color": { "type": "string" },
+        "genre": { "type": "string" },
+        "problems": { "type": "string" },
+        "warranty": { "type": "string" },
+        "refundPolicy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "isSold": { "type": "boolean" },
+        "isPromotion": { "type": "boolean" },
+        "location": { "type": "string" },
+        "likes": { "type": "array" }
+      },
+      "required": ["sellerId", "title", "price"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Products listed for sale"
+    }
+  }
+}

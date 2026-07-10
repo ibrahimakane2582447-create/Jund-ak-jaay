@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+body {
+  /* Disable text selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  /* Disable iOS touch callout (the popup menu when you long-press) */
+  -webkit-touch-callout: none;
+}
+
+/* Allow selection in input fields and textareas so users can type and edit */
+input, textarea, select {
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+}
+
+/* Prevent image dragging */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}

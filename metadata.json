@@ -1,0 +1,6 @@
+{
+  "name": "Jundakjaay",
+  "description": "Jundakjaay - A marketplace application to buy and sell products, with direct WhatsApp messaging.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
