@@ -1,16 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { collection, query, where, orderBy, onSnapshot, getDocs, addDoc, updateDoc, doc, serverTimestamp, getDoc, deleteDoc } from "firebase/firestore";
-import { db, auth } from "../firebase";
-import { Send, ChevronLeft, User, Trash2, Heart, ThumbsUp, Smile } from "lucide-react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, auth, storage } from "../firebase";
+import { Send, ChevronLeft, User, Trash2, Heart, ThumbsUp, Smile, ImagePlus, Mic, Square } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Message {
   id: string;
-  text: string;
+  text?: string;
   senderId: string;
   createdAt: any;
   reactions?: string[];
+  imageUrl?: string;
+  audioUrl?: string;
 }
 
 export default function Chat() {
@@ -22,6 +25,11 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleDeleteMessage = async (messageId: string) => {
@@ -121,6 +129,100 @@ export default function Chat() {
     return () => unsubscribe();
   }, [chatId, currentUser]);
 
+  const sendMessageData = async (data: Partial<Message>) => {
+    if (!auth.currentUser || !userId) return;
+    try {
+      let currentChatId = chatId;
+      if (!currentChatId) {
+        const newChatRef = await addDoc(collection(db, "chats"), {
+          participants: [auth.currentUser.uid, userId],
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          lastMessage: data.text || (data.imageUrl ? "Image" : data.audioUrl ? "Audio" : "Nouveau message"),
+          lastMessageSenderId: auth.currentUser.uid
+        });
+        currentChatId = newChatRef.id;
+        setChatId(currentChatId);
+      }
+
+      await addDoc(collection(db, "chats", currentChatId, "messages"), {
+        ...data,
+        senderId: auth.currentUser.uid,
+        createdAt: serverTimestamp()
+      });
+
+      await updateDoc(doc(db, "chats", currentChatId), {
+        lastMessage: data.text || (data.imageUrl ? "Image" : data.audioUrl ? "Audio" : "Nouveau message"),
+        updatedAt: serverTimestamp(),
+        lastMessageSenderId: auth.currentUser.uid
+      });
+    } catch (error) {
+      console.error("Error sending message data:", error);
+      toast.error("Erreur lors de l'envoi.");
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploadingImage(true);
+    try {
+      const storageRef = ref(storage, `chat_images/${Date.now()}_${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      await sendMessageData({ imageUrl: downloadURL });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Erreur lors de l'upload de l'image.");
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        try {
+          const storageRef = ref(storage, `chat_audios/${Date.now()}.webm`);
+          const snapshot = await uploadBytes(storageRef, audioBlob);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          await sendMessageData({ audioUrl: downloadURL });
+        } catch (error) {
+          console.error("Error uploading audio:", error);
+          toast.error("Erreur lors de l'envoi de l'audio.");
+        }
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Error starting recording:", error);
+      toast.error("Impossible d'accéder au microphone.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !auth.currentUser || !userId) return;
@@ -128,40 +230,7 @@ export default function Chat() {
     const messageText = newMessage.trim();
     setNewMessage("");
 
-    try {
-      let currentChatId = chatId;
-
-      // Create chat if it doesn't exist
-      if (!currentChatId) {
-        const newChatRef = await addDoc(collection(db, "chats"), {
-          participants: [auth.currentUser.uid, userId],
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          lastMessage: messageText,
-          lastMessageSenderId: auth.currentUser.uid
-        });
-        currentChatId = newChatRef.id;
-        setChatId(currentChatId);
-      }
-
-      // Add message
-      await addDoc(collection(db, "chats", currentChatId, "messages"), {
-        text: messageText,
-        senderId: auth.currentUser.uid,
-        createdAt: serverTimestamp()
-      });
-
-      // Update last message
-      await updateDoc(doc(db, "chats", currentChatId), {
-        lastMessage: messageText,
-        updatedAt: serverTimestamp(),
-        lastMessageSenderId: auth.currentUser.uid
-      });
-
-    } catch (error) {
-      console.error("Error sending message:", error);
-      toast.error("Erreur lors de l'envoi du message.");
-    }
+    await sendMessageData({ text: messageText });
   };
 
   if (!auth.currentUser) return null;
@@ -216,7 +285,13 @@ export default function Chat() {
                         : 'bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm'
                     }`}
                   >
-                    <p className="text-[15px]">{msg.text}</p>
+                    {msg.imageUrl && (
+                      <img src={msg.imageUrl} alt="Message" className="rounded-lg max-w-[200px] mb-1" />
+                    )}
+                    {msg.audioUrl && (
+                      <audio controls src={msg.audioUrl} className="max-w-[200px] mb-1" />
+                    )}
+                    {msg.text && <p className="text-[15px]">{msg.text}</p>}
                     
                     {/* Display Reactions */}
                     {msg.reactions && msg.reactions.length > 0 && (
@@ -263,22 +338,63 @@ export default function Chat() {
       </div>
 
       {/* Input Area */}
-      <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-slate-100 flex gap-2">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Écrivez votre message..."
-          className="flex-1 bg-slate-100 border-transparent focus:bg-white border focus:border-indigo-500 rounded-2xl px-4 py-3 outline-none transition-colors"
+      <div className="p-4 bg-white border-t border-slate-100 flex gap-2 items-center relative">
+        <input 
+          type="file" 
+          accept="image/*" 
+          className="hidden" 
+          ref={fileInputRef} 
+          onChange={handleImageUpload} 
         />
-        <button
-          type="submit"
-          disabled={!newMessage.trim()}
-          className="bg-indigo-600 text-white p-3 rounded-2xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        <button 
+          type="button" 
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingImage || isRecording}
+          className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-full transition-colors disabled:opacity-50"
+          title="Ajouter une image"
         >
-          <Send className="w-5 h-5" />
+          {uploadingImage ? <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div> : <ImagePlus className="w-5 h-5" />}
         </button>
-      </form>
+
+        {isRecording ? (
+          <button 
+            type="button" 
+            onClick={stopRecording}
+            className="p-3 text-red-500 bg-red-50 hover:bg-red-100 rounded-full transition-colors animate-pulse"
+            title="Arrêter l'enregistrement"
+          >
+            <Square className="w-5 h-5 fill-current" />
+          </button>
+        ) : (
+          <button 
+            type="button" 
+            onClick={startRecording}
+            disabled={uploadingImage}
+            className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-full transition-colors disabled:opacity-50"
+            title="Envoyer un audio"
+          >
+            <Mic className="w-5 h-5" />
+          </button>
+        )}
+
+        <form onSubmit={handleSendMessage} className="flex-1 flex gap-2">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            disabled={isRecording || uploadingImage}
+            placeholder={isRecording ? "Enregistrement en cours..." : "Écrivez votre message..."}
+            className="flex-1 bg-slate-100 border-transparent focus:bg-white border focus:border-indigo-500 rounded-2xl px-4 py-3 outline-none transition-colors disabled:opacity-50"
+          />
+          <button
+            type="submit"
+            disabled={!newMessage.trim() || isRecording || uploadingImage}
+            className="bg-indigo-600 text-white p-3 rounded-2xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

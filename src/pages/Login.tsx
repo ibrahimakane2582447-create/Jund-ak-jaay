@@ -54,6 +54,10 @@ export default function Login() {
         errorMessage = "Erreur réseau. Veuillez vérifier votre connexion ou ouvrir l'application dans un nouvel onglet si vous êtes dans un aperçu.";
       } else if (err.code === 'auth/operation-not-allowed') {
         errorMessage = "La connexion par Google n'est pas activée. Veuillez l'activer dans la console Firebase (Authentication > Sign-in method).";
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        errorMessage = "La connexion a été annulée. Veuillez réessayer.";
+      } else if (err.code === 'auth/unauthorized-domain') {
+        errorMessage = "Veuillez ajouter votre domaine Vercel dans les domaines autorisés de la console Firebase (Authentication > Paramètres > Domaines autorisés).";
       }
       setError(errorMessage);
     } finally {

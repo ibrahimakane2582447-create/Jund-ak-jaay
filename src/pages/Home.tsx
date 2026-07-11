@@ -18,6 +18,8 @@ interface Product {
   location?: string;
   likes?: string[];
   createdAt?: any;
+  genre?: string;
+  category?: string;
 }
 
 interface AppUser {
@@ -98,7 +100,9 @@ export default function Home() {
 
   const filteredProducts = products.filter(product => 
     product.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    product.location?.toLowerCase().includes(searchQuery.toLowerCase())
+    product.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.genre?.toLowerCase().includes(searchQuery.toLowerCase())
   ).sort((a, b) => {
     if (sortOption === 'price_asc') {
       return a.price - b.price;
