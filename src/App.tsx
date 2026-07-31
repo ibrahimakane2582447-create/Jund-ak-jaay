@@ -13,6 +13,7 @@ import SellerProfile from "./pages/SellerProfile";
 import Messages from "./pages/Messages";
 import Chat from "./pages/Chat";
 import Favorites from "./pages/Favorites";
+import Notifications from "./pages/Notifications";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
 
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="messages" element={<Messages />} />
             <Route path="chat/:userId" element={<Chat />} />
             <Route path="favorites" element={<Favorites />} />
+            <Route path="notifications" element={<Notifications />} />
           </Route>
         </Routes>
       </BrowserRouter>

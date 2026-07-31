@@ -1,20 +1,24 @@
 {
-  "short_name": "Jundakjaay",
-  "name": "Jundakjaay Marketplace",
+  "short_name": "Jund ak Jaay",
+  "name": "Jund ak Jaay - Achat & Vente",
+  "description": "Plateforme d'achat et de vente en ligne au Sénégal",
   "icons": [
     {
-      "src": "/icon.jpg",
+      "src": "/app_icon.jpg",
       "type": "image/jpeg",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon.jpg",
+      "src": "/app_icon.jpg",
       "type": "image/jpeg",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#4f46e5",
   "background_color": "#ffffff"
 }

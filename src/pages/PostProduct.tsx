@@ -160,11 +160,35 @@ export default function PostProduct() {
       if (id) {
         await updateDoc(doc(db, "products", id), productData);
       } else {
-        await addDoc(collection(db, "products"), {
+        const newProductRef = await addDoc(collection(db, "products"), {
           ...productData,
           isSold: false,
           createdAt: new Date(),
         });
+
+        // Broadcast notification to all clients
+        try {
+          await addDoc(collection(db, "notifications"), {
+            title: "Nouveau produit publié !",
+            message: `${userData.name || 'Un vendeur'} a publié : "${title}" (${parseFloat(price).toLocaleString()} FCFA)`,
+            productId: newProductRef.id,
+            productTitle: title,
+            productImage: images[0] || "",
+            sellerId: auth.currentUser.uid,
+            sellerName: userData.name || "",
+            createdAt: new Date().toISOString(),
+            readBy: [auth.currentUser.uid]
+          });
+
+          if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+            new Notification("Nouveau produit sur Jund ak Jaay !", {
+              body: `${userData.name || 'Un vendeur'} a publié "${title}"`,
+              icon: images[0] || "/app_icon.jpg"
+            });
+          }
+        } catch (notifErr) {
+          console.error("Error creating notification document:", notifErr);
+        }
       }
 
       navigate("/");
