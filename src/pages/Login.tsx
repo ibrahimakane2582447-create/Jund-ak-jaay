@@ -101,19 +101,21 @@ export default function Login() {
 
       const generatedUsername = username.trim() || fullName.trim().toLowerCase().replace(/\s+/g, "_");
 
-      await updateProfile(user, { displayName: fullName.trim() });
-
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        name: fullName.trim(),
-        username: generatedUsername,
-        phone: phone.trim(),
-        email: email.trim() || `${phone.trim().replace(/[^a-z0-9]/gi, "")}@jundakjaay.app`,
-        country: country || "Sénégal",
-        gender: gender || "Homme",
-        photoURL: "",
-        createdAt: new Date().toISOString()
-      }, { merge: true });
+      // Execute profile update and firestore doc creation concurrently for speed
+      await Promise.all([
+        updateProfile(user, { displayName: fullName.trim() }),
+        setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          name: fullName.trim(),
+          username: generatedUsername,
+          phone: phone.trim(),
+          email: email.trim() || `${phone.trim().replace(/[^a-z0-9]/gi, "")}@jundakjaay.app`,
+          country: country || "Sénégal",
+          gender: gender || "Homme",
+          photoURL: "",
+          createdAt: new Date().toISOString()
+        }, { merge: true })
+      ]);
 
       toast.success("Compte créé avec succès !");
       navigate("/");
