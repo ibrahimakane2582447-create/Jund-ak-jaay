@@ -6,6 +6,7 @@ import { auth, db } from "../firebase";
 import { Store, PlusCircle, LogIn, LogOut, User, Globe, Home, Settings, MessageCircle, Heart, Bell } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import LanguageSelector from "./LanguageSelector";
+import InstallPwaBanner from "./InstallPwaBanner";
 
 export default function Layout() {
   const [user, setUser] = useState<any>(null);
@@ -198,6 +199,7 @@ export default function Layout() {
           </Link>
         </div>
       )}
+      <InstallPwaBanner />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc, setDoc, deleteDoc, arrayUnion, arrayRemove, collection, addDoc, query, orderBy, getDocs, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase";
-import { MessageCircle, ShieldCheck, RefreshCw, User, ChevronLeft, MapPin, Trash2, CheckCircle2, Heart } from "lucide-react";
+import { MessageCircle, ShieldCheck, RefreshCw, User, ChevronLeft, MapPin, Trash2, CheckCircle2, Heart, Share2, Copy, Send, ExternalLink } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import toast from "react-hot-toast";
 
@@ -155,6 +155,42 @@ export default function ProductDetails() {
     }
   };
 
+  const handleShareNative = async () => {
+    const currentUrl = window.location.href;
+    const shareData = {
+      title: `${product.title} - Jund ak Jaay`,
+      text: `Regarde ce produit sur Jund ak Jaay : "${product.title}" (${product.price.toLocaleString('fr-FR')} FCFA)`,
+      url: currentUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        toast.success("Partagé avec succès !");
+      } catch (err) {
+        // User closed share modal
+      }
+    } else {
+      handleCopyProductLink();
+    }
+  };
+
+  const handleCopyProductLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Lien du produit copié dans le presse-papier !");
+  };
+
+  const handleShareWhatsAppLink = () => {
+    const currentUrl = window.location.href;
+    const text = encodeURIComponent(`Regarde ce produit sur Jund ak Jaay : *${product.title}* à *${product.price.toLocaleString('fr-FR')} FCFA*\n${currentUrl}`);
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  };
+
+  const handleShareFacebook = () => {
+    const currentUrl = window.location.href;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, '_blank');
+  };
+
   return (
     <div className="max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -303,6 +339,48 @@ export default function ProductDetails() {
                   Envoyer un message
                 </Link>
               )}
+
+              {/* Share Options */}
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Share2 className="w-4 h-4 text-indigo-600" />
+                  <span>Partager ce produit</span>
+                </div>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button
+                    onClick={handleShareNative}
+                    className="flex items-center justify-center gap-1.5 p-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold text-xs transition-colors"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    <span>Partager</span>
+                  </button>
+
+                  <button
+                    onClick={handleShareWhatsAppLink}
+                    className="flex items-center justify-center gap-1.5 p-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold text-xs transition-colors"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>WhatsApp</span>
+                  </button>
+
+                  <button
+                    onClick={handleShareFacebook}
+                    className="flex items-center justify-center gap-1.5 p-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold text-xs transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Facebook</span>
+                  </button>
+
+                  <button
+                    onClick={handleCopyProductLink}
+                    className="flex items-center justify-center gap-1.5 p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition-colors"
+                  >
+                    <Copy className="w-4 h-4" />
+                    <span>Copier lien</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

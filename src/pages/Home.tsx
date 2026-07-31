@@ -3,7 +3,7 @@ import { collection, query, getDocs, updateDoc, setDoc, doc, arrayUnion, arrayRe
 import { db, auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
-import { Search, Heart, User } from "lucide-react";
+import { Search, Heart, User, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 import CustomSelect from "../components/CustomSelect";
 
@@ -95,6 +95,27 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error updating like:", error);
+    }
+  };
+
+  const handleQuickShare = async (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const productUrl = `${window.location.origin}/product/${product.id}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${product.title} - Jund ak Jaay`,
+          text: `Regarde ce produit sur Jund ak Jaay : "${product.title}" (${product.price.toLocaleString('fr-FR')} FCFA)`,
+          url: productUrl
+        });
+      } catch (err) {
+        // User closed share window
+      }
+    } else {
+      navigator.clipboard.writeText(productUrl);
+      toast.success("Lien du produit copié !");
     }
   };
 
@@ -230,12 +251,22 @@ export default function Home() {
               to={`/product/${product.id}`}
               className="group bg-white rounded-xl border-2 border-indigo-500 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col hover:-translate-y-1 relative"
             >
-              <button 
-                onClick={(e) => handleLike(e, product.id, product.likes)}
-                className="absolute top-1.5 right-1.5 z-20 p-1.5 bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:scale-110 transition-transform"
-              >
-                <Heart className={`w-3 h-3 ${product.likes?.includes(auth.currentUser?.uid || '') ? 'fill-red-500 text-red-500' : 'text-slate-400 hover:text-red-500'}`} />
-              </button>
+              <div className="absolute top-1.5 right-1.5 z-20 flex items-center gap-1">
+                <button 
+                  onClick={(e) => handleQuickShare(e, product)}
+                  className="p-1.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:scale-110 text-slate-500 hover:text-indigo-600 transition-transform"
+                  title="Partager le produit"
+                >
+                  <Share2 className="w-3 h-3" />
+                </button>
+                <button 
+                  onClick={(e) => handleLike(e, product.id, product.likes)}
+                  className="p-1.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:scale-110 transition-transform"
+                  title="Ajouter aux favoris"
+                >
+                  <Heart className={`w-3 h-3 ${product.likes?.includes(auth.currentUser?.uid || '') ? 'fill-red-500 text-red-500' : 'text-slate-400 hover:text-red-500'}`} />
+                </button>
+              </div>
               
               {product.isSold && (
                 <div className="absolute top-1.5 left-1.5 z-20 bg-slate-900/80 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">

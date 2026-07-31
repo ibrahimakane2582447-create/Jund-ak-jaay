@@ -96,10 +96,6 @@ export default function PostProduct() {
   const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      if (file.size > 25 * 1024 * 1024) {
-        setError("La vidéo ne doit pas dépasser 25Mo.");
-        return;
-      }
 
       const tempVideo = document.createElement("video");
       tempVideo.preload = "metadata";
@@ -109,8 +105,8 @@ export default function PostProduct() {
         URL.revokeObjectURL(tempVideo.src);
         const duration = tempVideo.duration;
 
-        if (duration > 20) {
-          setError(`La vidéo dure ${Math.round(duration)}s. Elle doit faire 20 secondes MAXIMUM (idéalement 10 à 20s).`);
+        if (duration < 3) {
+          setError(`La vidéo est trop courte (${Math.round(duration)}s). Elle doit durer au moins 3 secondes.`);
           return;
         }
 
@@ -278,11 +274,11 @@ export default function PostProduct() {
           <div className="flex items-center justify-between mb-1">
             <label className="block text-sm font-bold text-slate-700">Vidéo du produit (Optionnel)</label>
             <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
-              Max 20 secondes
+              Min. 3 secondes
             </span>
           </div>
           <p className="text-xs text-slate-500 mb-3">
-            Montrez votre produit en action avec une courte vidéo de 10 à 20 secondes.
+            Ajoutez une vidéo de présentation du produit (minimum 3 secondes, tous les poids MB sont acceptés).
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -307,7 +303,7 @@ export default function PostProduct() {
               <label className="aspect-video flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all bg-slate-50 p-4">
                 <Video className="w-7 h-7 text-indigo-500 mb-1" />
                 <span className="text-xs font-bold text-slate-700">Ajouter une vidéo</span>
-                <span className="text-[11px] text-slate-400 mt-0.5">Format court (10 - 20s max)</span>
+                <span className="text-[11px] text-slate-400 mt-0.5">3 secondes minimum</span>
                 <input type="file" accept="video/*" className="hidden" onChange={handleVideoChange} />
               </label>
             )}
