@@ -21,6 +21,7 @@ export default function PostProduct() {
   const [isPromotion, setIsPromotion] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [video, setVideo] = useState<string>("");
+  const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { t } = useLanguage();
@@ -55,6 +56,7 @@ export default function PostProduct() {
             setIsPromotion(data.isPromotion || false);
             setImages(data.images || []);
             setVideo(data.video || "");
+            setVideoDuration(data.videoDuration || null);
           } else {
             navigate("/");
           }
@@ -76,8 +78,8 @@ export default function PostProduct() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      if (images.length + filesArray.length > 3) {
-        setError("Vous ne pouvez ajouter que 3 images au maximum.");
+      if (images.length + filesArray.length > 8) {
+        setError("Vous pouvez ajouter jusqu'à 8 images au maximum.");
         return;
       }
       
@@ -94,17 +96,37 @@ export default function PostProduct() {
   const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      if (file.size > 700 * 1024) {
-        setError("La vidéo doit faire moins de 10Mo.");
+      if (file.size > 25 * 1024 * 1024) {
+        setError("La vidéo ne doit pas dépasser 25Mo.");
         return;
       }
-      try {
-        const base64Video = await fileToBase64(file);
-        setVideo(base64Video);
-        setError("");
-      } catch (err) {
-        setError("Erreur lors du traitement de la vidéo.");
-      }
+
+      const tempVideo = document.createElement("video");
+      tempVideo.preload = "metadata";
+      tempVideo.src = URL.createObjectURL(file);
+
+      tempVideo.onloadedmetadata = async () => {
+        URL.revokeObjectURL(tempVideo.src);
+        const duration = tempVideo.duration;
+
+        if (duration > 20) {
+          setError(`La vidéo dure ${Math.round(duration)}s. Elle doit faire 20 secondes MAXIMUM (idéalement 10 à 20s).`);
+          return;
+        }
+
+        try {
+          const base64Video = await fileToBase64(file);
+          setVideo(base64Video);
+          setVideoDuration(Math.round(duration));
+          setError("");
+        } catch (err) {
+          setError("Erreur lors du traitement de la vidéo.");
+        }
+      };
+
+      tempVideo.onerror = () => {
+        setError("Format de vidéo non valide ou illisible.");
+      };
     }
   };
 
@@ -114,13 +136,15 @@ export default function PostProduct() {
 
   const removeVideo = () => {
     setVideo("");
+    setVideoDuration(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth.currentUser) return;
-    if (images.length < 1) {
-      setError("Veuillez ajouter au moins une image.");
+
+    if (images.length < 3) {
+      setError(`Veuillez ajouter au moins 3 photos du produit (actuellement : ${images.length}/3).`);
       return;
     }
 
@@ -155,6 +179,7 @@ export default function PostProduct() {
         isPromotion,
         images,
         video,
+        videoDuration: videoDuration || null,
       };
 
       if (id) {
@@ -207,24 +232,42 @@ export default function PostProduct() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-bold text-slate-700 mb-2">Images du produit (Max 3)</label>
-          <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-bold text-slate-700">
+              Photos du produit <span className="text-red-500 font-extrabold">*</span>
+            </label>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+              images.length >= 3 ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+            }`}>
+              {images.length < 3 ? `Minimum 3 photos requises (${images.length}/3)` : `${images.length} photos ajoutées`}
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 mb-3">
+            Ajoutez au moins 3 photos claires sous différents angles pour rassurer vos acheteurs (Max 8 photos).
+          </p>
+
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
             {images.map((img, index) => (
               <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-slate-200 group bg-slate-50">
-                <img src={img} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                <img src={img} alt={`Aperçu ${index + 1}`} className="w-full h-full object-cover" />
+                <span className="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm">
+                  #{index + 1}
+                </span>
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+                  className="absolute top-1.5 right-1.5 bg-red-600/80 text-white rounded-full p-1 transition-opacity hover:bg-red-700 shadow-sm"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
-            {images.length < 3 && (
-              <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-colors bg-slate-50">
-                <Upload className="w-6 h-6 text-slate-400" />
-                <span className="text-xs font-bold text-slate-500 mt-2 text-center px-2">Ajouter Photo</span>
+
+            {images.length < 8 && (
+              <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all bg-slate-50 p-2">
+                <Upload className="w-6 h-6 text-indigo-500" />
+                <span className="text-xs font-bold text-slate-600 mt-1.5 text-center">Ajouter photo</span>
+                <span className="text-[10px] text-slate-400 font-medium text-center">(Max 8)</span>
                 <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageChange} />
               </label>
             )}
@@ -232,23 +275,39 @@ export default function PostProduct() {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-slate-700 mb-2">Vidéo du produit (Optionnel)</label>
-          <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-sm font-bold text-slate-700">Vidéo du produit (Optionnel)</label>
+            <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
+              Max 20 secondes
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 mb-3">
+            Montrez votre produit en action avec une courte vidéo de 10 à 20 secondes.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             {video ? (
-              <div className="col-span-3 sm:col-span-1 relative aspect-video sm:aspect-square rounded-2xl overflow-hidden border border-slate-200 group bg-slate-900">
+              <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 group bg-black shadow-sm">
                 <video src={video} className="w-full h-full object-cover" controls />
+                {videoDuration && (
+                  <span className="absolute bottom-2 left-2 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded-lg backdrop-blur-sm z-10">
+                    ⏱️ {videoDuration}s
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={removeVideo}
-                  className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 z-10"
+                  className="absolute top-2 right-2 bg-red-600/90 text-white rounded-full p-1.5 hover:bg-red-700 z-10 shadow-sm"
+                  title="Supprimer la vidéo"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <label className="col-span-3 sm:col-span-1 aspect-video sm:aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-colors bg-slate-50">
-                <Video className="w-6 h-6 text-slate-400" />
-                <span className="text-xs font-bold text-slate-500 mt-2 text-center px-2">Ajouter Vidéo</span>
+              <label className="aspect-video flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all bg-slate-50 p-4">
+                <Video className="w-7 h-7 text-indigo-500 mb-1" />
+                <span className="text-xs font-bold text-slate-700">Ajouter une vidéo</span>
+                <span className="text-[11px] text-slate-400 mt-0.5">Format court (10 - 20s max)</span>
                 <input type="file" accept="video/*" className="hidden" onChange={handleVideoChange} />
               </label>
             )}
