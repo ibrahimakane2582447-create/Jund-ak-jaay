@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Download, X, Smartphone, Sparkles, Share } from "lucide-react";
+import { Download, X, Smartphone, Sparkles, Share, Store } from "lucide-react";
 
 export default function InstallPwaBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -61,8 +61,8 @@ export default function InstallPwaBanner() {
   return (
     <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:w-96 z-50 bg-slate-900 text-white p-4 rounded-3xl shadow-2xl border border-slate-700/80 backdrop-blur-md animate-in slide-in-from-bottom-5 duration-300">
       <div className="flex items-start gap-3">
-        <div className="w-12 h-12 bg-indigo-600 rounded-2xl overflow-hidden shrink-0 border border-indigo-400/40 shadow-inner">
-          <img src="/app_icon.jpg" alt="Jund ak Jaay App Icon" className="w-full h-full object-cover" />
+        <div className="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center shrink-0 border border-slate-700 shadow-inner">
+          <Store className="w-6 h-6 text-emerald-400" />
         </div>
 
         <div className="flex-1 min-w-0">

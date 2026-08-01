@@ -72,12 +72,12 @@ export default function Layout() {
       <header className="h-16 px-4 sm:px-6 bg-white/90 backdrop-blur-md border-b border-slate-200/80 flex items-center shrink-0 sticky top-0 z-30 shadow-xs">
         <div className="max-w-7xl w-full mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800 shadow-sm group-hover:scale-105 transition-transform">
-              <img src="/app_icon.jpg" alt="Jund ak Jaay" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <Store className="w-5 h-5 text-emerald-400" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-extrabold tracking-tight text-slate-900 leading-tight">Jund ak Jaay</span>
-              <span className="text-[10px] font-semibold text-emerald-600 tracking-wide uppercase">Sénégal Marketplace</span>
+            <div className="flex flex-col justify-center">
+              <span className="text-xl font-extrabold tracking-tight text-slate-900 leading-none">Jund ak Jaay</span>
+              <span className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase mt-0.5">Sénégal</span>
             </div>
           </Link>
           
