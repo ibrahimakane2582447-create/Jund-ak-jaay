@@ -136,14 +136,14 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto w-full bg-white p-6 sm:p-8 rounded-[2rem] shadow-sm border border-slate-200 my-8">
+    <div className="max-w-md mx-auto w-full bg-white p-6 sm:p-8 rounded-3xl shadow-xs border border-slate-200/80 my-6">
       {/* Header */}
-      <div className="flex flex-col items-center text-center mb-8">
-        <div className="w-16 h-16 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-indigo-200">
-          <Store className="w-8 h-8" />
+      <div className="flex flex-col items-center text-center mb-6">
+        <div className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center mb-3 shadow-sm border border-slate-800">
+          <Store className="w-7 h-7" />
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Jund ak Jaay</h2>
-        <p className="text-slate-500 font-medium text-sm mt-1">Connectez-vous pour acheter et vendre rapidement</p>
+        <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Jund ak Jaay</h2>
+        <p className="text-slate-500 font-medium text-xs mt-1">Plateforme d'achats et de ventes au Sénégal</p>
       </div>
 
       {/* Tabs Switcher */}
@@ -151,9 +151,9 @@ export default function Login() {
         <button
           type="button"
           onClick={() => { setTab('login'); setError(""); }}
-          className={`py-3 text-sm font-bold rounded-xl transition-all ${
+          className={`py-2.5 text-xs font-bold rounded-xl transition-all ${
             tab === 'login'
-              ? 'bg-white text-indigo-600 shadow-sm'
+              ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -162,9 +162,9 @@ export default function Login() {
         <button
           type="button"
           onClick={() => { setTab('register'); setError(""); }}
-          className={`py-3 text-sm font-bold rounded-xl transition-all ${
+          className={`py-2.5 text-xs font-bold rounded-xl transition-all ${
             tab === 'register'
-              ? 'bg-white text-indigo-600 shadow-sm'
+              ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -211,7 +211,7 @@ export default function Login() {
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm font-medium transition-all"
               />
               <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -220,7 +220,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-100 disabled:opacity-50 mt-6"
+            className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 mt-6 text-sm"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -230,7 +230,7 @@ export default function Login() {
             ) : (
               <>
                 <span>Se connecter</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
@@ -249,7 +249,7 @@ export default function Login() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Ex: Cheikh Ndiaye"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm font-medium transition-all"
               />
               <UserIcon className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -266,7 +266,7 @@ export default function Login() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+221 77 123 45 67"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm font-medium transition-all"
               />
               <Phone className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -282,7 +282,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="exemple@email.com"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm font-medium transition-all"
               />
               <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -329,7 +329,7 @@ export default function Login() {
                 value={registerPassword}
                 onChange={(e) => setRegisterPassword(e.target.value)}
                 placeholder="Au moins 6 caractères"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm font-medium transition-all"
               />
               <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -347,7 +347,7 @@ export default function Login() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Répétez le mot de passe"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm font-medium transition-all"
               />
               <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -356,7 +356,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-100 disabled:opacity-50 mt-6"
+            className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 mt-6 text-sm"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -366,7 +366,7 @@ export default function Login() {
             ) : (
               <>
                 <span>Créer mon compte</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>

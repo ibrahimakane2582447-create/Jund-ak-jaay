@@ -229,44 +229,41 @@ export default function ProductDetails() {
         )}
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row mb-8">
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col md:flex-row mb-8">
         {/* Images */}
-        <div className="w-full md:w-1/2 p-4 md:p-6 bg-slate-100 flex flex-col relative">
+        <div className="w-full md:w-1/2 p-4 md:p-6 bg-slate-50 flex flex-col relative border-b md:border-b-0 md:border-r border-slate-200/80">
           {product.isSold && (
-            <div className="absolute top-8 left-8 z-10 bg-slate-900/80 backdrop-blur-sm text-white text-sm font-bold px-3 py-1.5 rounded-lg uppercase">
+            <div className="absolute top-8 left-8 z-10 bg-slate-900/90 backdrop-blur-sm text-white text-xs font-extrabold px-3 py-1.5 rounded-xl uppercase tracking-wider">
               Produit Vendu
             </div>
           )}
           {product.isPromotion && !product.isSold && (
-            <div className="absolute top-8 left-8 z-10 bg-red-500 text-white text-sm font-bold px-3 py-1.5 rounded-lg uppercase shadow-sm">
+            <div className="absolute top-8 left-8 z-10 bg-emerald-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-xl uppercase tracking-wider shadow-sm">
               En Promotion
             </div>
           )}
-          <div className="flex-1 rounded-2xl overflow-hidden border border-slate-300 relative bg-white aspect-square md:aspect-auto">
-            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none overflow-hidden">
-              <span className="text-black/10 drop-shadow-sm font-black text-3xl md:text-5xl -rotate-12 uppercase tracking-widest text-center px-4 mix-blend-overlay">JUND AK JAAY</span>
-            </div>
+          <div className="flex-1 rounded-2xl overflow-hidden border border-slate-200 relative bg-white aspect-square md:aspect-auto">
             {product.images && product.images.length > 0 ? (
-              <img src={product.images[activeImage]} alt={product.title} className={`w-full h-full object-contain ${product.isSold ? 'grayscale opacity-80' : ''}`} />
+              <img src={product.images[activeImage]} alt={product.title} className={`w-full h-full object-contain ${product.isSold ? 'grayscale opacity-75' : ''}`} />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-slate-400 font-medium">Sans image</div>
             )}
           </div>
           {product.images && product.images.length > 1 && (
-            <div className="flex gap-4 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex gap-3 mt-4 overflow-x-auto pb-1 scrollbar-none">
               {product.images.map((img: string, idx: number) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(idx)}
-                  className={`w-20 h-20 rounded-2xl overflow-hidden border-2 transition-colors flex-shrink-0 ${activeImage === idx ? 'border-indigo-600' : 'border-slate-300'}`}
+                  className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${activeImage === idx ? 'border-emerald-600 ring-2 ring-emerald-600/20' : 'border-slate-200 hover:border-slate-300'}`}
                 >
-                  <img src={img} alt={`View ${idx+1}`} className={`w-full h-full object-cover ${product.isSold ? 'grayscale opacity-80' : ''}`} />
+                  <img src={img} alt={`Aperçu ${idx+1}`} className={`w-full h-full object-cover ${product.isSold ? 'grayscale opacity-75' : ''}`} />
                 </button>
               ))}
             </div>
           )}
           {product.video && (
-            <div className="mt-4 rounded-2xl overflow-hidden border border-slate-300 bg-black aspect-video">
+            <div className="mt-4 rounded-2xl overflow-hidden border border-slate-200 bg-black aspect-video shadow-xs">
               <video src={product.video} controls className="w-full h-full object-contain"></video>
             </div>
           )}
@@ -275,108 +272,121 @@ export default function ProductDetails() {
         {/* Details */}
         <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">{product.title}</h1>
-            <div className="flex items-center justify-between mb-6">
-              <div className="text-4xl font-black text-indigo-600">{product.price.toLocaleString('fr-FR')} FCFA</div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug mb-3">{product.title}</h1>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+              <div>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Prix demandé</span>
+                <span className="text-3xl font-extrabold text-slate-900">{product.price.toLocaleString('fr-FR')} <span className="text-lg font-bold text-emerald-600">FCFA</span></span>
+              </div>
               <button 
                 onClick={handleLike}
-                className="p-3 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors flex items-center gap-2"
+                className="p-3 bg-slate-100 hover:bg-rose-50 rounded-2xl transition-colors flex items-center gap-2"
+                title="Favoris"
               >
-                <Heart className={`w-6 h-6 ${product.likes?.includes(auth.currentUser?.uid || '') ? 'fill-red-500 text-red-500' : 'text-slate-500'}`} />
+                <Heart className={`w-5 h-5 ${product.likes?.includes(auth.currentUser?.uid || '') ? 'fill-rose-500 text-rose-500' : 'text-slate-500 hover:text-rose-500'}`} />
                 {product.likes && product.likes.length > 0 && (
-                  <span className="font-bold text-slate-600">{product.likes.length}</span>
+                  <span className="font-bold text-xs text-slate-700">{product.likes.length}</span>
                 )}
               </button>
             </div>
             
-            <div className="flex flex-col gap-3 text-sm font-medium text-slate-500 tracking-wider mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-medium text-slate-600 mb-6 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/60">
               {product.location && (
-                <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-slate-400" /> Adresse: <strong className="text-slate-900">{product.location}</strong></span>
+                <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-emerald-600 shrink-0" /> <span>Ville: <strong className="text-slate-900">{product.location}</strong></span></div>
               )}
               {product.genre && (
-                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div>Genre/Catégorie: <strong className="text-slate-900">{product.genre}</strong></span>
+                <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div><span>Catégorie: <strong className="text-slate-900">{product.genre}</strong></span></div>
               )}
-              <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div>{t('color')}: <strong className="text-slate-900">{product.color}</strong></span>
+              {product.color && (
+                <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400 shrink-0"></div><span>{t('color')}: <strong className="text-slate-900">{product.color}</strong></span></div>
+              )}
+              {product.warranty && (
+                <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-slate-400 shrink-0" /><span>{t('warranty')}: <strong className="text-slate-900">{product.warranty}</strong></span></div>
+              )}
+              {product.refundPolicy && (
+                <div className="flex items-center gap-2"><RefreshCw className="w-4 h-4 text-slate-400 shrink-0" /><span>{t('refund')}: <strong className="text-slate-900">{product.refundPolicy}</strong></span></div>
+              )}
               {product.problems && (
-                <span className="flex items-center gap-2 text-red-600"><div className="w-2 h-2 rounded-full bg-red-400"></div>Problèmes: <strong className="text-red-700">{product.problems}</strong></span>
+                <div className="col-span-full flex items-center gap-2 text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-100"><div className="w-2 h-2 rounded-full bg-rose-500 shrink-0"></div><span>Problèmes signalés: <strong className="text-rose-700">{product.problems}</strong></span></div>
               )}
-              <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-slate-400" />{t('warranty')}: <strong className="text-slate-900">{product.warranty}</strong></span>
-              <span className="flex items-center gap-2"><RefreshCw className="w-4 h-4 text-slate-400" />{t('refund')}: <strong className="text-slate-900">{product.refundPolicy}</strong></span>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-200">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-2xl flex items-center justify-center text-lg font-bold">
-                  {product.sellerName?.substring(0, 2).toUpperCase() || <User className="w-6 h-6" />}
+          <div className="pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-4 bg-slate-50 p-3 rounded-2xl border border-slate-200/60">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center text-sm font-bold">
+                  {product.sellerName?.substring(0, 2).toUpperCase() || <User className="w-5 h-5" />}
                 </div>
                 <div>
-                  <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('seller')}</div>
-                  <Link to={`/seller/${product.sellerId}`} className="font-bold text-lg text-slate-900 hover:text-indigo-600">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('seller')}</div>
+                  <Link to={`/seller/${product.sellerId}`} className="font-bold text-sm text-slate-900 hover:text-emerald-600 transition-colors">
                     {product.sellerName}
                   </Link>
                 </div>
               </div>
+              <Link to={`/seller/${product.sellerId}`} className="text-xs font-bold text-emerald-700 hover:underline">
+                Voir profil →
+              </Link>
             </div>
             
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
               <button
                 onClick={handleWhatsApp}
                 disabled={product.isSold}
-                className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white py-4 rounded-2xl font-bold shadow-lg shadow-green-200 hover:scale-[1.02] transition-transform text-lg disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 bg.emerald-600 bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-2xl font-bold shadow-sm transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <MessageCircle className="w-6 h-6 fill-current" />
+                <MessageCircle className="w-5 h-5 fill-current" />
                 {product.isSold ? "Produit Vendu" : t('contactWhatsApp')}
               </button>
               
               {!product.isSold && product.sellerId !== auth.currentUser?.uid && (
                 <Link
                   to={`/chat/${product.sellerId}`}
-                  className="w-full py-4 rounded-2xl font-bold flex justify-center items-center gap-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors border border-indigo-100 text-lg"
+                  className="w-full py-3.5 rounded-2xl font-bold flex justify-center items-center gap-2 bg-slate-900 text-white hover:bg-slate-800 transition-colors text-sm"
                 >
-                  <MessageCircle className="w-6 h-6" />
-                  Envoyer un message
+                  <MessageCircle className="w-5 h-5" />
+                  Envoyer un message privé
                 </Link>
               )}
 
               {/* Share Options */}
               <div className="mt-4 pt-4 border-t border-slate-100">
-                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Share2 className="w-4 h-4 text-indigo-600" />
-                  <span>Partager ce produit</span>
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Share2 className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Partager cette annonce</span>
                 </div>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <button
                     onClick={handleShareNative}
-                    className="flex items-center justify-center gap-1.5 p-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold text-xs transition-colors"
+                    className="flex items-center justify-center gap-1.5 p-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs transition-colors"
                   >
-                    <Share2 className="w-4 h-4" />
+                    <Share2 className="w-3.5 h-3.5" />
                     <span>Partager</span>
                   </button>
 
                   <button
                     onClick={handleShareWhatsAppLink}
-                    className="flex items-center justify-center gap-1.5 p-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold text-xs transition-colors"
+                    className="flex items-center justify-center gap-1.5 p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold text-xs transition-colors"
                   >
-                    <Send className="w-4 h-4" />
+                    <Send className="w-3.5 h-3.5" />
                     <span>WhatsApp</span>
                   </button>
 
                   <button
                     onClick={handleShareFacebook}
-                    className="flex items-center justify-center gap-1.5 p-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold text-xs transition-colors"
+                    className="flex items-center justify-center gap-1.5 p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold text-xs transition-colors"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <ExternalLink className="w-3.5 h-3.5" />
                     <span>Facebook</span>
                   </button>
 
                   <button
                     onClick={handleCopyProductLink}
-                    className="flex items-center justify-center gap-1.5 p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition-colors"
+                    className="flex items-center justify-center gap-1.5 p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition-colors"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-3.5 h-3.5" />
                     <span>Copier lien</span>
                   </button>
                 </div>

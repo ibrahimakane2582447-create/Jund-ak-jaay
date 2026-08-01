@@ -149,82 +149,105 @@ export default function Home() {
   }
 
   return (
-    <div>
-      <div className="mb-10 text-center">
-        <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 tracking-tight leading-tight">
-          Achetez et vendez <br className="hidden sm:block" /> vos marchandises
-        </h1>
-        <p className="text-slate-500 mt-4 font-medium text-lg max-w-2xl mx-auto">
-          Découvrez les meilleures offres autour de vous et vendez vos articles rapidement.
-        </p>
-        
-        <div className="mt-8 max-w-2xl mx-auto relative">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-slate-400" />
+    <div className="space-y-8">
+      {/* Clean Marketplace Header & Search */}
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs relative overflow-hidden">
+        <div className="max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-bold mb-3">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Marché local en direct • Sénégal
           </div>
-          <input
-            type="text"
-            className="block w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-full text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm transition-shadow hover:shadow-md"
-            placeholder="Rechercher un produit (ex: Iphone, Décoration) ou un vendeur..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            Achetez & vendez en toute confiance
+          </h1>
+          <p className="text-slate-500 mt-2 text-sm sm:text-base font-medium">
+            Des milliers de bonnes affaires près de chez vous : téléphones, vêtements, véhicules, immobilier et bien plus.
+          </p>
 
-        {/* Categories Quick Links */}
-        <div className="flex flex-wrap justify-center gap-2 mt-6 max-w-3xl mx-auto">
-          {["Tous", "Téléphones", "Électronique", "Vêtements", "Véhicules", "Immobilier", "Décoration"].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSearchQuery(cat === "Tous" ? "" : cat)}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
-                (cat === "Tous" && searchQuery === "") || searchQuery === cat
-                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-                  : "bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+          <div className="mt-6 flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-slate-400" />
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+                placeholder="Rechercher un produit, marque (ex: iPhone, Robe, Moto)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="px-4 py-3 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 rounded-2xl transition-colors"
+              >
+                Effacer
+              </button>
+            )}
+          </div>
+
+          {/* Categories Horizontal Chips */}
+          <div className="flex items-center gap-2 mt-4 overflow-x-auto pb-1 scrollbar-none">
+            {["Tous", "Téléphones", "Électronique", "Vêtements", "Véhicules", "Immobilier", "Maison"].map((cat) => {
+              const isSelected = (cat === "Tous" && searchQuery === "") || searchQuery === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSearchQuery(cat === "Tous" ? "" : cat)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                    isSelected
+                      ? "bg-slate-900 text-white shadow-sm"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200/60"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
+      {/* Users Results Search */}
       {searchQuery && filteredUsers.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Utilisateurs</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="space-y-4">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <User className="w-5 h-5 text-emerald-600" />
+            <span>Vendeurs trouvés ({filteredUsers.length})</span>
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {filteredUsers.map(user => (
               <Link 
                 key={user.id} 
                 to={`/seller/${user.id}`}
-                className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+                className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 shadow-xs hover:shadow-sm transition-all group"
               >
-                <div className="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
+                <div className="w-10 h-10 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden shrink-0 border border-slate-200">
                   {user.photoURL ? (
                     <img src={user.photoURL} alt={user.name} className="w-full h-full object-cover" />
                   ) : (
-                    user.name?.substring(0, 2).toUpperCase() || <User className="w-6 h-6" />
+                    user.name?.substring(0, 2).toUpperCase() || <User className="w-5 h-5" />
                   )}
                 </div>
-                <h3 className="font-bold text-slate-900">{user.name}</h3>
+                <h3 className="font-bold text-xs text-slate-900 truncate group-hover:text-emerald-600 transition-colors">{user.name}</h3>
               </Link>
             ))}
           </div>
         </div>
       )}
 
-      {searchQuery && filteredUsers.length > 0 && filteredProducts.length > 0 && (
-         <h2 className="text-2xl font-bold text-slate-900 mb-6">Produits</h2>
-      )}
-
-      {filteredProducts.length > 0 || filteredUsers.length === 0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <h2 className="text-2xl font-bold text-slate-900">
-            {searchQuery ? (filteredUsers.length > 0 ? '' : 'Produits') : 'Les plus récents'}
-          </h2>
+      {/* Products Results & Toolbar */}
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-500 hidden sm:inline">Trier par:</span>
-            <div className="w-48">
+            <h2 className="text-lg font-extrabold text-slate-900">
+              {searchQuery ? `Résultats (${filteredProducts.length})` : 'Annonces récentes'}
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 ml-auto">
+            <span className="text-xs font-semibold text-slate-500 hidden sm:inline">Trier :</span>
+            <div className="w-44">
               <CustomSelect
                 value={sortOption}
                 onChange={(val) => setSortOption(val as SortOption)}
@@ -237,79 +260,105 @@ export default function Home() {
             </div>
           </div>
         </div>
-      ) : null}
 
-      {filteredProducts.length === 0 && filteredUsers.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-[2rem] border border-slate-200 shadow-sm">
-          <p className="text-slate-500 font-medium">Aucun résultat trouvé pour votre recherche.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2 sm:gap-4">
-          {filteredProducts.map((product) => (
-            <Link
-              key={product.id}
-              to={`/product/${product.id}`}
-              className="group bg-white rounded-xl border-2 border-indigo-500 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col hover:-translate-y-1 relative"
+        {filteredProducts.length === 0 && filteredUsers.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-3xl border border-slate-200/80 shadow-xs p-8">
+            <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <Search className="w-6 h-6" />
+            </div>
+            <p className="text-slate-900 font-bold text-base">Aucune annonce ne correspond à votre recherche.</p>
+            <p className="text-slate-500 text-xs mt-1">Essayez avec d'autres mots clés ou parcourez les catégories.</p>
+            <button
+              onClick={() => setSearchQuery("")}
+              className="mt-4 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors"
             >
-              <div className="absolute top-1.5 right-1.5 z-20 flex items-center gap-1">
-                <button 
-                  onClick={(e) => handleQuickShare(e, product)}
-                  className="p-1.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:scale-110 text-slate-500 hover:text-indigo-600 transition-transform"
-                  title="Partager le produit"
-                >
-                  <Share2 className="w-3 h-3" />
-                </button>
-                <button 
-                  onClick={(e) => handleLike(e, product.id, product.likes)}
-                  className="p-1.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:scale-110 transition-transform"
-                  title="Ajouter aux favoris"
-                >
-                  <Heart className={`w-3 h-3 ${product.likes?.includes(auth.currentUser?.uid || '') ? 'fill-red-500 text-red-500' : 'text-slate-400 hover:text-red-500'}`} />
-                </button>
-              </div>
-              
-              {product.isSold && (
-                <div className="absolute top-1.5 left-1.5 z-20 bg-slate-900/80 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">
-                  Vendu
-                </div>
-              )}
-              {product.isPromotion && !product.isSold && (
-                <div className="absolute top-1.5 left-1.5 z-20 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase shadow-sm">
-                  Promo
-                </div>
-              )}
-              <div className="aspect-square bg-slate-100 overflow-hidden relative">
-                <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none overflow-hidden">
-                  <span className="text-white/40 drop-shadow-md font-black text-xs md:text-lg -rotate-12 uppercase tracking-widest text-center px-1 mix-blend-overlay">JUND AK JAAY</span>
-                </div>
-                {product.images && product.images.length > 0 ? (
-                  <img
-                    src={product.images[0]}
-                    alt={product.title}
-                    className={`w-full h-full object-cover transition-transform duration-300 ${product.isSold ? 'grayscale opacity-70' : 'group-hover:scale-105'}`}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-400 font-medium text-[10px]">
-                    Sans image
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col flex-1 p-2 sm:p-3">
-                <h3 className="font-semibold text-slate-900 text-[11px] sm:text-xs line-clamp-2 leading-tight">{product.title}</h3>
-                <p className="text-[9px] text-slate-500 mt-0.5 font-medium truncate">{product.location || product.sellerName}</p>
-                <div className="mt-auto pt-1 flex items-center justify-between">
-                  <span className="font-bold text-[11px] sm:text-xs text-indigo-600">{product.price.toLocaleString('fr-FR')} FCFA</span>
-                  {product.likes && product.likes.length > 0 && (
-                    <span className="text-[9px] font-bold text-slate-400 flex items-center gap-0.5">
-                      <Heart className="w-2.5 h-2.5 fill-slate-300" /> {product.likes.length}
-                    </span>
+              Réinitialiser la recherche
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            {filteredProducts.map((product) => (
+              <Link
+                key={product.id}
+                to={`/product/${product.id}`}
+                className="group bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden relative"
+              >
+                {/* Image & Action Overlay */}
+                <div className="aspect-[4/3] bg-slate-100 overflow-hidden relative">
+                  {product.images && product.images.length > 0 ? (
+                    <img
+                      src={product.images[0]}
+                      alt={product.title}
+                      className={`w-full h-full object-cover transition-transform duration-300 ease-out ${
+                        product.isSold ? 'grayscale opacity-60' : 'group-hover:scale-105'
+                      }`}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 font-medium text-xs">
+                      Sans image
+                    </div>
                   )}
+
+                  {/* Status Badges */}
+                  <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
+                    {product.isSold && (
+                      <span className="bg-slate-900/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-lg backdrop-blur-sm shadow-xs uppercase">
+                        Vendu
+                      </span>
+                    )}
+                    {product.isPromotion && !product.isSold && (
+                      <span className="bg-emerald-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-xs uppercase">
+                        PROMO
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions Overlay */}
+                  <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+                    <button 
+                      onClick={(e) => handleQuickShare(e, product)}
+                      className="p-1.5 bg-white/90 hover:bg-white text-slate-700 rounded-full shadow-xs hover:scale-110 transition-all backdrop-blur-sm"
+                      title="Partager"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button 
+                      onClick={(e) => handleLike(e, product.id, product.likes)}
+                      className="p-1.5 bg-white/90 hover:bg-white rounded-full shadow-xs hover:scale-110 transition-all backdrop-blur-sm"
+                      title="Favoris"
+                    >
+                      <Heart className={`w-3.5 h-3.5 ${product.likes?.includes(auth.currentUser?.uid || '') ? 'fill-rose-500 text-rose-500' : 'text-slate-500 hover:text-rose-500'}`} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+
+                {/* Content */}
+                <div className="p-3 flex flex-col flex-1">
+                  <h3 className="font-bold text-xs sm:text-sm text-slate-900 line-clamp-2 leading-snug group-hover:text-emerald-700 transition-colors">
+                    {product.title}
+                  </h3>
+                  
+                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-end justify-between gap-1">
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">
+                        {product.location || product.sellerName}
+                      </p>
+                      <p className="font-extrabold text-sm text-slate-900 mt-0.5">
+                        {product.price.toLocaleString('fr-FR')} <span className="text-[10px] font-bold text-emerald-600">FCFA</span>
+                      </p>
+                    </div>
+                    {product.likes && product.likes.length > 0 && (
+                      <span className="text-[10px] font-bold text-slate-400 flex items-center gap-0.5 mb-0.5">
+                        <Heart className="w-3 h-3 fill-slate-300 text-slate-300" /> {product.likes.length}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

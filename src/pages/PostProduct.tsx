@@ -221,19 +221,19 @@ export default function PostProduct() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-[2rem] shadow-sm border border-slate-200">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">{id ? "Modifier le produit" : t('postProduct')}</h1>
+    <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-xs border border-slate-200/80">
+      <h1 className="text-2xl font-extrabold text-slate-900 mb-6 tracking-tight">{id ? "Modifier le produit" : t('postProduct')}</h1>
       
-      {error && <div className="mb-6 p-3 bg-red-50 text-red-600 rounded-xl text-sm font-medium">{error}</div>}
+      {error && <div className="mb-6 p-4 bg-rose-50 text-rose-700 rounded-2xl text-xs font-bold border border-rose-100">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-bold text-slate-700">
-              Photos du produit <span className="text-red-500 font-extrabold">*</span>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              Photos du produit <span className="text-rose-500 font-extrabold">*</span>
             </label>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-              images.length >= 3 ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+              images.length >= 3 ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-amber-50 text-amber-700 border border-amber-200"
             }`}>
               {images.length < 3 ? `Minimum 3 photos requises (${images.length}/3)` : `${images.length} photos ajoutées`}
             </span>
@@ -246,13 +246,13 @@ export default function PostProduct() {
             {images.map((img, index) => (
               <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-slate-200 group bg-slate-50">
                 <img src={img} alt={`Aperçu ${index + 1}`} className="w-full h-full object-cover" />
-                <span className="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm">
+                <span className="absolute bottom-1.5 left-1.5 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm">
                   #{index + 1}
                 </span>
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute top-1.5 right-1.5 bg-red-600/80 text-white rounded-full p-1 transition-opacity hover:bg-red-700 shadow-sm"
+                  className="absolute top-1.5 right-1.5 bg-rose-600 text-white rounded-full p-1 transition-opacity hover:bg-rose-700 shadow-xs"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -260,9 +260,9 @@ export default function PostProduct() {
             ))}
 
             {images.length < 8 && (
-              <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all bg-slate-50 p-2">
-                <Upload className="w-6 h-6 text-indigo-500" />
-                <span className="text-xs font-bold text-slate-600 mt-1.5 text-center">Ajouter photo</span>
+              <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-emerald-600 hover:bg-emerald-50/50 transition-all bg-slate-50 p-2">
+                <Upload className="w-5 h-5 text-emerald-600" />
+                <span className="text-xs font-bold text-slate-700 mt-1.5 text-center">Ajouter photo</span>
                 <span className="text-[10px] text-slate-400 font-medium text-center">(Max 8)</span>
                 <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageChange} />
               </label>
@@ -272,8 +272,8 @@ export default function PostProduct() {
 
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-sm font-bold text-slate-700">Vidéo du produit (Optionnel)</label>
-            <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Vidéo du produit (Optionnel)</label>
+            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
               Min. 3 secondes
             </span>
           </div>
@@ -283,7 +283,7 @@ export default function PostProduct() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             {video ? (
-              <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 group bg-black shadow-sm">
+              <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 group bg-black shadow-xs">
                 <video src={video} className="w-full h-full object-cover" controls />
                 {videoDuration && (
                   <span className="absolute bottom-2 left-2 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded-lg backdrop-blur-sm z-10">
@@ -293,15 +293,15 @@ export default function PostProduct() {
                 <button
                   type="button"
                   onClick={removeVideo}
-                  className="absolute top-2 right-2 bg-red-600/90 text-white rounded-full p-1.5 hover:bg-red-700 z-10 shadow-sm"
+                  className="absolute top-2 right-2 bg-rose-600 text-white rounded-full p-1.5 hover:bg-rose-700 z-10 shadow-xs"
                   title="Supprimer la vidéo"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <label className="aspect-video flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all bg-slate-50 p-4">
-                <Video className="w-7 h-7 text-indigo-500 mb-1" />
+              <label className="aspect-video flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-emerald-600 hover:bg-emerald-50/50 transition-all bg-slate-50 p-4">
+                <Video className="w-6 h-6 text-emerald-600 mb-1" />
                 <span className="text-xs font-bold text-slate-700">Ajouter une vidéo</span>
                 <span className="text-[11px] text-slate-400 mt-0.5">3 secondes minimum</span>
                 <input type="file" accept="video/*" className="hidden" onChange={handleVideoChange} />
@@ -310,34 +310,34 @@ export default function PostProduct() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-sm font-bold text-slate-700 mb-1">{t('productTitle')}</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{t('productTitle')}</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="Ex: iPhone 13 Pro Max"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-sm font-bold text-slate-700 mb-1">Numéro de téléphone</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Numéro de téléphone</label>
             <input
               type="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="Ex: +221 77 000 00 00"
             />
-            <p className="text-xs text-slate-500 mt-1">Obligatoire pour que les acheteurs puissent vous contacter.</p>
+            <p className="text-[11px] text-slate-500 mt-1 font-medium">Obligatoire pour que les acheteurs puissent vous contacter.</p>
           </div>
           
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">{t('price')} (FCFA)</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{t('price')} (FCFA)</label>
             <input
               type="number"
               required
@@ -345,20 +345,20 @@ export default function PostProduct() {
               step="1"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="0"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">{t('color')}</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{t('color')}</label>
             <input
               type="text"
               required
               list="color-list"
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="Ex: Noir, Blanc..."
             />
             <datalist id="color-list">
@@ -375,54 +375,54 @@ export default function PostProduct() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Genre / Catégorie</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Genre / Catégorie</label>
             <input
               type="text"
               required
               value={genre}
               onChange={(e) => setGenre(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="Ex: Électronique, Vêtements..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Problèmes ou défauts</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Problèmes ou défauts</label>
             <input
               type="text"
               value={problems}
               onChange={(e) => setProblems(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="Ex: Aucun, Rayure sur l'écran..."
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-sm font-bold text-slate-700 mb-1">Adresse / Lieu du produit</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Adresse / Lieu du produit</label>
             <input
               type="text"
               required
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="Ex: Dakar, Point E"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">{t('warranty')}</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{t('warranty')}</label>
             <input
               type="text"
               required
               value={warranty}
               onChange={(e) => setWarranty(e.target.value)}
-              className="w-full px-5 py-3 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none text-sm font-medium transition-all"
               placeholder="Ex: 6 mois"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">{t('refund')}</label>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{t('refund')}</label>
             <CustomSelect
               value={refundPolicy}
               onChange={setRefundPolicy}
@@ -435,24 +435,24 @@ export default function PostProduct() {
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+        <div className="flex items-center space-x-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
           <input
             type="checkbox"
             id="isPromotion"
             checked={isPromotion}
             onChange={(e) => setIsPromotion(e.target.checked)}
-            className="w-5 h-5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+            className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
           />
-          <label htmlFor="isPromotion" className="text-sm font-bold text-slate-700 cursor-pointer">
-            Mettre ce produit en promotion
+          <label htmlFor="isPromotion" className="text-xs font-bold text-slate-800 cursor-pointer">
+            Mettre ce produit en promotion (Badge Promo visible)
           </label>
         </div>
 
-        <div className="pt-6 border-t border-slate-200">
+        <div className="pt-4 border-t border-slate-100">
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-2xl hover:bg-slate-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm shadow-sm"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (id ? "Mettre à jour" : t('publishProduct'))}
           </button>
